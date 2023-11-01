@@ -506,8 +506,13 @@ transformDeleteStmt(ParseState *pstate, DeleteStmt *stmt)
 	nsitem->p_lateral_only = false;
 	nsitem->p_lateral_ok = true;
 
-	qual = transformWhereClause(pstate, stmt->whereClause,
-								EXPR_KIND_WHERE, "WHERE");
+	qual = transformWhereClause(pstate, stmt->whereClause,EXPR_KIND_WHERE, "WHERE");
+
+	qry->sortClause = transformSortClause(pstate,stmt->sortClause,&qry->targetList,EXPR_KIND_ORDER_BY,false);
+
+	qry->limitOffset = transformLimitClause(pstate, stmt->limitOffset,EXPR_KIND_OFFSET, "OFFSET",stmt->limitOption);
+	qry->limitCount = transformLimitClause(pstate, stmt->limitCount,EXPR_KIND_LIMIT, "LIMIT",stmt->limitOption);
+	qry->limitOption = stmt->limitOption;
 
 	qry->returningList = transformReturningList(pstate, stmt->returningList);
 
