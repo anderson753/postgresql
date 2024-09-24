@@ -12425,6 +12425,14 @@ relation_expr:
 					$$->inh = true;
 					$$->alias = NULL;
 				}
+			| qualified_name Op name
+				{
+					if (strcmp($2, "@") != 0)
+						ereport(ERROR, (errcode(ERRCODE_SYNTAX_ERROR), errmsg("unrecognized operator \"%s\"", $2), parser_errposition(@2)));
+					$$ = $1;
+					$$->inh = true;
+					$$->alias = NULL;
+				}
 			| ONLY qualified_name
 				{
 					/* no inheritance */
